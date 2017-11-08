@@ -1,0 +1,25 @@
+{
+  "name": "websocket_app",
+  "version": "1.0.0",
+  "description": "Based upon Net Ninja web sockets Tutorial",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danhagg/websocket_app.git"
+  },
+  "author": "Dan Haggerty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danhagg/websocket_app/issues"
+  },
+  "homepage": "https://github.com/danhagg/websocket_app#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  }
+}
