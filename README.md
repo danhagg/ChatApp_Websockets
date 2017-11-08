@@ -1,5 +1,7 @@
 # App-building guide
 
+### Follow github versions
+
 Based upon Net Ninja web sockets Tutorial
 
 This app uses websockets.io library to communicate between the client and browser.
@@ -149,4 +151,66 @@ button{
     border-radius: 0 0 2px 2px;
 }
 ```
+
+The web page will still look plain until we add html elements that fit the css styling.
+![image](images/readme/v0.1_2.png)
+
 #### v0.2
+Now we will start usingweb sockets via the library socket.io
+Will be installed server-side (`index.js`) and client-side (`index.html`). This allows socket.io to be set up on both sides and allow data to pass between the two ends.
+
+In the `node.js` file store the socket function in a variable. socket() takes one argument... the server we declared. Socket.io will now be on the server waiting for client/browser to setup a websocket.
+
+```javascript
+// Socket setup
+var io = socket(server);
+```
+
+We now need to detect the 'connection' event which subsequently fires a callback function once the connection is made. The callback function takes the argument `socket` for the specific instance from which the socket was made. Therefore, each client will have its own socket instance which can be viewed by passing socket.id argument.
+```javascript
+io.on('connection', function(socket){
+  console.log('made socket connection', socket.id)
+})
+```
+Load socket.io library onto front end.
+From https://cdnjs.com/libraries/socket.io copy the most recent `...socket.io.js` cdn library and paste into `index.html`
+```html
+<script>https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js</script>
+```
+
+Need to create own `.js` file where we will run all our custom socket code. Reference this in html with
+```html
+<script src="/chat.js"></script>
+```
+
+Now let's create  the contents of the `chat.js` file in public folder
+
+Now we should create the `chat.js` code for making the connection between client and server
+
+We have already loaded in the websocket.io cdn library contained within `index.html` and as a result we have access to `io` variable. So, we can make a new socket variable (not to be confused with the server-side socket variable) that connects to the local host.
+
+```javascript
+// Make connection
+var socket = io.connect('http://localhost:4000');
+```
+Refresh the browser to check if the websocket connection was made and look at the terminal for the answer contained in our `index.js console.log` statement...
+
+It should look like this!
+![image](images/readme/v0.2_1.png)
+
+So..., just what exactly happened?
+
+Firstly, on server via `index.js`
+1. We created a server, stored in in a variable
+2. Invoked socket function and passed in the server
+3. Then started listening for a connection with the io.on function
+
+On client via `index.html`
+4. the `index.html` file gets loaded into browser
+5. browser loads in the socket.io cdn library
+6. then runs `chat.js` file
+7. the `chat.js` file establishes the connection to server to create the websocket
+
+Back in `index.js`
+8. We detect a connection in via the `io.on` function
+9. which in turn, pushes our `console.log` message 'made socket connection'
