@@ -196,6 +196,7 @@ var socket = io.connect('http://localhost:4000');
 Refresh the browser to check if the websocket connection was made and look at the terminal for the answer contained in our `index.js console.log` statement...
 
 It should look like this!
+
 ![image](images/readme/v0.2_1.png)
 
 So..., just what exactly happened?
@@ -214,3 +215,86 @@ On client via `index.html`
 Back in `index.js`
 8. We detect a connection in via the `io.on` function
 9. which in turn, pushes our `console.log` message 'made socket connection'
+
+#### v0.3
+We can now start sending messages back and forth to server and clients via the websockets.
+
+We need to add some html to design the front end of the app.
+
+Importantly, there are four elements with id's
+1. `output` (where messages are displayed)
+2. `handle` (a text box taking in the name of a user)
+3. `message` (a text box taking in the message typed in)
+4. `send` (a button to signal transfer of a message)
+
+```html
+<div id="porkpy-chat">
+  <div id="chat-window">
+    <div id="output"></div>
+  </div>
+  <input id="handle" type="text" placeholder="Handle"/>
+  <input id="message" type="text" placeholder="Message"/>
+  <button id="send">Send</button>
+</div>
+```
+Refreshing the browser... things should look like this
+![image](images/readme/v0.3_1.png)
+
+Start querying the DOM and storing some variables. These variables are references to Handle, Message, Send and Output from the browser.
+A variable is created for each in `chat.js` so that we can do things with the variables.
+```javascript
+// Query DOM
+var message = document.getElementById('message');
+var handle = document.getElementById('handle')
+var btn = document.getElementById('send');
+var output = document.getElementById('output');
+```
+
+We wish to `emit` a message when someone clicks `send`. So we need to add the following functionality to a button click in the `chat.js` file.
+```javascript
+btn.addEventListener('click', function(){
+  socket.emit('chat', {
+    message: message.value,
+    handle: handle.value
+  })
+});
+```
+The button element listens for a click and emits a message down the websocket to the server. The emit() function takes two parameters 1. the name of message 2. a data object which contains two values {handle, message} that we are sending to the server.
+This emitted data now has to be dealt with on server by the `index.js` code.
+
+Remember me?
+```javascript
+io.on('connection', function(socket){
+  console.log('made socket connection', socket.id)
+})
+```
+I was the function inside of the `index.js` file that sat on the server waiting for a connection. Well, now I can be modified to to listen for the message emitted from the client upon the establishment of a connection. As the server listens for 'chat' message, a connection is made thereby making a `socket`.
+
+socket.on is triggered upon receipt of an emission from the browser emitted message labelled 'chat'. Upon receipt, a function is fired that accepts the 'chat' label as an argument and then passes the incoming data associated with 'chat' back out of the server to all the other connected sockets.
+```javascript
+socket.on('chat', function(data) {
+  io.sockets.emit('chat', data)
+});
+```
+The full function now looks like this!
+```javascript
+io.on('connection', function(socket){
+  console.log('made socket connection', socket.id);
+  socket.on('chat', function(data) {
+    io.sockets.emit('chat', data)
+  });
+});
+```
+The data passed from the server, down all individual server-client sockets, now has to be accepted on the client side by code in `chat.js`!
+
+The client is listening for events. If the socket receives a chat message it fires a callback function with the chat data and sends it to the DOM, namely to the div named 'output'
+
+The following code is added to `chat.js` to perform this function.
+```javascript
+socket.on('chat', function (data) {
+  output.innerHTML += '<p><strong>' + data.handle + ':</strong>' + data.message + '</p>';
+});
+```
+The communication from two clients over a local host server can now be tested by opening two web pages and communicating from one to the other by typing in a handle and chat on one page and seeing it appear on both clients (shown below).
+
+![image](images/readme/v0.3_2.png)

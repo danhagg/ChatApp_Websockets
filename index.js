@@ -1,7 +1,7 @@
 var express = require('express');
 
 // bring socket into the app
-var socket = require('socket.io')
+var socket = require('socket.io');
 
 // App setup by invoking 'express' function
 var app = express();
@@ -16,13 +16,12 @@ var server = app.listen(4000, function () {
 app.use(express.static('public'));
 
 // Socket setup
-//store socket function in variable. Takes one argument... the server we declared
-//socket.io will be on server waiting for client/browser to setup a websocket
 var io = socket(server);
 
-// detects 'connection' event which fires a callback function once connection made
-// callback function takes the argument socket for that instance fro which the socket was made
-// Each client will therefore have its own socket instance and there is information contained within that 'socket' instance which can be viewed by adding ', socket' to console.log()
-io.on('connection', function(socket){
-  console.log('made socket connection', socket.id)
-})
+// wait for connection, receieve chat + data. Send chat + data back down websockets to clients
+io.on('connection', function (socket) {
+  console.log('made socket connection', socket.id);
+  socket.on('chat', function (data) {
+    io.sockets.emit('chat', data);
+  });
+});
