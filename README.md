@@ -298,3 +298,57 @@ socket.on('chat', function (data) {
 The communication from two clients over a local host server can now be tested by opening two web pages and communicating from one to the other by typing in a handle and chat on one page and seeing it appear on both clients (shown below).
 
 ![image](images/readme/v0.3_2.png)
+
+#### v0.4
+As can be seen from the above figure, the message that I send is not only displayed in other clients browsers, but also (rather unnecessarily) it is also displayed in my own browser. When we 'broadcast' a message we can prevent the message from posting to our own browser. We can also emit a '<user> is typing' message to the other clients as a user types.
+
+Firstly, in the `index,html` file, we add a place for the 'user is typing' message to be outputted to the screen.
+```html
+<div id="feedback"></div>
+```
+The feedback handle can then be used by `chat.js` by adding the variable...
+
+```javascript
+var feedback = document.getElementById('feedback');
+```
+Next, we need to add a key-press listener to the message box (where folk type their messages) which in turn emits to the server and broadcasts the 'user is typing message. So we add a listener to our message field in the front end `chat.js.`
+
+```javascript
+// listens for keypress, produces a 'typing'-labelled emission + handle's value.
+// This has to now be dealt with in index.js in server for broadcasting.
+message.addEventListener('keypress', function () {
+  // handle.value is the data in 'typing'
+  socket.emit('typing', handle.value);
+});
+```
+
+This has to be handled now on the server by `index.js`.
+```javascript
+// Handle incoming 'typing' message.. 'broadcast' excludes own.
+// Now needs to be handled by all front end clients in chat.js
+socket.on('typing', function (data) {
+  socket.broadcast.emit('typing', data);
+  });
+```
+
+So... back to the front-end `chat.js` which receives the broadcasts with
+```javascript
+// receives user is typing message. Data is username
+socket.on('typing', function (data) {
+  feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>';
+});
+```
+Finally, the following code is added to the front end `chat.js`.
+```javascript
+feedback.innerHTML = '';
+message.value = '';
+```
+ It clears the feedback variable (user is typing) from the receiving clients and to clear the text from the message box in the sending client to yeild a final front end socket listener.
+
+```javascript
+socket.on('chat', function (data) {
+  feedback.innerHTML = '';
+  message.value = '';
+  output.innerHTML += '<p><strong>' + data.handle + ':</strong>' + data.message + '</p>';
+});
+```
