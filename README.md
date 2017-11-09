@@ -370,7 +370,10 @@ var server = app.listen(PORT, function () {
   console.log('listening to requests on ' + PORT);
 });
 ```
-
+Change frontend redirect to localhost:<br>
+`var socket = io.connect('http://localhost:4000');`<br>
+to<br>
+`var socket = io.connect('http://localhost:4000');`<br>
 4. Add an ANAME to google domains porkpy.com with the following values:
 
 chat ANAME 15m IP-address

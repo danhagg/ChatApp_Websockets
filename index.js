@@ -6,6 +6,11 @@ var socket = require('socket.io');
 // App setup by invoking 'express' function
 var app = express();
 
+// refactor this code
+// var server = app.listen(4000, function () {
+//   console.log('listening to requests on PORT 4000');
+// });
+
 var PORT = process.env.PORT || 4000;
 var server = app.listen(PORT, function () {
   console.log('listening to requests on ' + PORT);
