@@ -352,3 +352,52 @@ socket.on('chat', function (data) {
   output.innerHTML += '<p><strong>' + data.handle + ':</strong>' + data.message + '</p>';
 });
 ```
+
+#### v0.5
+Let's refactor the app into a deployable version. And deploy it. What do we need?
+1. Procfile (Tells server what to do to run that app, needs a web worker). Procfile has the contents `web: node index.js` added to it
+
+2. Check package.json is appropriate. I also had to specify node version in package.json…
+
+  "engines": {
+    "node": "6.11.1"
+
+3. refactor listening for web portal
+We need to add a web portal variable 'PORT' that allows users to connect to each other via our website. If not via the website and we wish to continue developing the app (which we will) then we will || 4000 which tells the app, if no port is found use localhost:4000.
+```javascript
+var PORT = process.env.PORT || 4000;
+var server = app.listen(PORT, function () {
+  console.log('listening to requests on ' + PORT);
+});
+```
+Change frontend redirect to localhost:<br>
+`var socket = io.connect('http://localhost:4000');`<br>
+to<br>
+`var socket = io.connect('http://localhost:4000');`<br>
+4. Add an ANAME to google domains porkpy.com with the following values:
+
+chat ANAME 15m IP-address
+
+5. Let's deploy... I already have dokku installed previously on my server...
+
+Log in to server:<br>
+`ssh ubuntu@porkpy.com`<br>
+and add the chat app:<br>
+`dokku apps:create chat`<br>
+list apps to check it worked:<br>
+`dokku apps:list`<br>
+(in local app directory):<br>
+`git remote add dokku dokku@‘IP’:chat`<br>
+`git remote -v`<br>
+`git push dokku`<br>
+
+6. Add SSL certificate
+`dokku config:set --no-restart chat DOKKU_LETSENCRYPT_EMAIL=youremail@email.com`<br>
+Then:<br>
+`dokku letsencrypt`
+
+Go to your webpage and we should be up n running
+
+#### v0.6
+Give functionality to the enter key
+Add draw

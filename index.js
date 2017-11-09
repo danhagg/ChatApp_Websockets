@@ -6,8 +6,11 @@ var socket = require('socket.io');
 // App setup by invoking 'express' function
 var app = express();
 
-// Setup server as a variable to listen on a portal
-// Add function to let us know its listening
+// refactor this code
+// var server = app.listen(4000, function () {
+//   console.log('listening to requests on PORT 4000');
+// });
+
 var PORT = process.env.PORT || 4000;
 var server = app.listen(PORT, function () {
   console.log('listening to requests on ' + PORT);
@@ -34,9 +37,3 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('typing', data);
   });
 });
-
-
-// var PORT = process.env.PORT || 4000;
-// app.listen(PORT, function () {
-// console.log('Listening on port ' + PORT);
-// });
