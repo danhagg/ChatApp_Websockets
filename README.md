@@ -1,14 +1,14 @@
 # App-building guide
 
-### Follow github versions
+The following is a complete guide to building the chat room app at `chat.porkpy.com`. It is lso avaliable on my GitHub [here](https://github.com/danhagg/websocket_app). This tutorial can also be followed by using git checkout v0.1, v0.2 etc to see the app building process stage by stage.
 
-Based upon Net Ninja web sockets Tutorial
+This app and tutorial is based upon Net Ninja web sockets Tutorial found [here](https://www.youtube.com/watch?v=vQjiN8Qgs3c).
 
 This app uses websockets.io library to communicate between the client and browser.
 
 The server-side code will be run on node.js in an Express app.
 
-Made a github repository with a node `.gitignore` (hides the node_modules folder) and cloned repository to local machine
+On github, make a repository with a node `.gitignore` (hides the node_modules folder) and clone the repository to the local machine.
 
 #### v0.1
 Initialize the project in the local folder with the terminal command `npm init`.
@@ -373,7 +373,7 @@ var server = app.listen(PORT, function () {
 Change frontend redirect to localhost:<br>
 `var socket = io.connect('http://localhost:4000');`<br>
 to<br>
-`var socket = io.connect('http://localhost:4000');`<br>
+`var socket = io.connect();`<br>
 4. Add an ANAME to google domains porkpy.com with the following values:
 
 chat ANAME 15m IP-address
@@ -399,5 +399,16 @@ Then:<br>
 Go to your webpage and we should be up n running
 
 #### v0.6
-Give functionality to the enter key
+Not working, quick fix on local host redirect ad added above
+
+Change frontend redirect to localhost:<br>
+`var socket = io.connect('http://localhost:4000');`<br>
+to<br>
+`var socket = io.connect();`<br>
+
+#### v0.7
+Add mobile response
+Add private room
+Add functionality to the enter key
 Add draw
+Add giphy
